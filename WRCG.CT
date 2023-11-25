@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="28">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"Show WrcVehicleSdk Debug Part 1"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : WRCG_dump.exe
+  Version: 
+  Date   : 2023-11-24
+  Author : Avery
+
+  This script does blah blah blah
+}
+
+define(address,"WRCG.exe"+943099)
+define(bytes,8B 83 28 19 00 00)
+
+[ENABLE]
+
+assert(address,bytes)
+alloc(newmem,$1000,"WRCG.exe"+943099)
+
+label(code)
+label(return)
+
+newmem:
+mov dword ptr [rbx+1928], 3
+mov rax, qword ptr [rbx]
+mov rcx, rbx
+call qword ptr [rax+250]
+
+code:
+  mov eax,[rbx+00001928]
+  jmp return
+
+address:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+
+address:
+  db bytes
+  // mov eax,[rbx+00001928]
+
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "WRCG_dump.exe"+943099
+
+"WRCG_dump.exe"+943069: 48 8B 80 90 00 00 00  -  mov rax,[rax+00000090]
+"WRCG_dump.exe"+943070: 48 8B 14 C8           -  mov rdx,[rax+rcx*8]
+"WRCG_dump.exe"+943074: EB 02                 -  jmp WRCG_dump.exe+943078
+"WRCG_dump.exe"+943076: 33 D2                 -  xor edx,edx
+"WRCG_dump.exe"+943078: 48 3B 93 80 00 00 00  -  cmp rdx,[rbx+00000080]
+"WRCG_dump.exe"+94307F: 74 18                 -  je WRCG_dump.exe+943099
+"WRCG_dump.exe"+943081: 80 BB 98 19 00 00 00  -  cmp byte ptr [rbx+00001998],00
+"WRCG_dump.exe"+943088: 0F 84 EF 01 00 00     -  je WRCG_dump.exe+94327D
+"WRCG_dump.exe"+94308E: 48 83 7B 58 00        -  cmp qword ptr [rbx+58],00
+"WRCG_dump.exe"+943093: 0F 84 E4 01 00 00     -  je WRCG_dump.exe+94327D
+// ---------- INJECTING HERE ----------
+"WRCG_dump.exe"+943099: 8B 83 28 19 00 00     -  mov eax,[rbx+00001928]
+// ---------- DONE INJECTING  ----------
+"WRCG_dump.exe"+94309F: 83 E8 02              -  sub eax,02
+"WRCG_dump.exe"+9430A2: 83 F8 01              -  cmp eax,01
+"WRCG_dump.exe"+9430A5: 0F 87 D2 01 00 00     -  ja WRCG_dump.exe+94327D
+"WRCG_dump.exe"+9430AB: 48 8B 83 78 21 00 00  -  mov rax,[rbx+00002178]
+"WRCG_dump.exe"+9430B2: 48 85 C0              -  test rax,rax
+"WRCG_dump.exe"+9430B5: 0F 84 C2 01 00 00     -  je WRCG_dump.exe+94327D
+"WRCG_dump.exe"+9430BB: 48 89 74 24 58        -  mov [rsp+58],rsi
+"WRCG_dump.exe"+9430C0: 48 8B B0 00 0A 00 00  -  mov rsi,[rax+00000A00]
+"WRCG_dump.exe"+9430C7: 48 85 F6              -  test rsi,rsi
+"WRCG_dump.exe"+9430CA: 0F 84 A8 01 00 00     -  je WRCG_dump.exe+943278
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>4</ID>
+      <Description>"Show WrcVehicleSdk Debug Part 2"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : WRCG_dump.exe
+  Version: 
+  Date   : 2023-11-24
+  Author : Avery
+
+  This script does blah blah blah
+}
+
+define(address,"WRCG.exe"+943036)
+define(bytes,83 B9 28 19 00 00 00)
+
+[ENABLE]
+
+assert(address,bytes)
+alloc(newmem,$1000,"WRCG.exe"+943036)
+
+label(code)
+label(return)
+
+newmem:
+ mov dword ptr [rcx+00001928],03
+
+code:
+  cmp dword ptr [rcx+00001928],00
+  jmp return
+
+address:
+  jmp newmem
+  nop
+  nop
+return:
+
+[DISABLE]
+
+address:
+  db bytes
+  // cmp dword ptr [rcx+00001928],00
+
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "WRCG_dump.exe"+943036
+
+"WRCG_dump.exe"+943028: CC                       -  int 3 
+"WRCG_dump.exe"+943029: CC                       -  int 3 
+"WRCG_dump.exe"+94302A: CC                       -  int 3 
+"WRCG_dump.exe"+94302B: CC                       -  int 3 
+"WRCG_dump.exe"+94302C: CC                       -  int 3 
+"WRCG_dump.exe"+94302D: CC                       -  int 3 
+"WRCG_dump.exe"+94302E: CC                       -  int 3 
+"WRCG_dump.exe"+94302F: CC                       -  int 3 
+"WRCG_dump.exe"+943030: 40 53                    -  push rbx
+"WRCG_dump.exe"+943032: 48 83 EC 40              -  sub rsp,40
+// ---------- INJECTING HERE ----------
+"WRCG_dump.exe"+943036: 83 B9 28 19 00 00 00     -  cmp dword ptr [rcx+00001928],00
+// ---------- DONE INJECTING  ----------
+"WRCG_dump.exe"+94303D: 48 8B D9                 -  mov rbx,rcx
+"WRCG_dump.exe"+943040: 0F 84 37 02 00 00        -  je WRCG_dump.exe+94327D
+"WRCG_dump.exe"+943046: E8 C5 50 3B 00           -  call WRCG_dump.exe+CF8110
+"WRCG_dump.exe"+94304B: 84 C0                    -  test al,al
+"WRCG_dump.exe"+94304D: 0F 85 2A 02 00 00        -  jne WRCG_dump.exe+94327D
+"WRCG_dump.exe"+943053: 48 8B 05 EE 32 42 01     -  mov rax,[WRCG_dump.exe+1D66348]
+"WRCG_dump.exe"+94305A: 48 63 88 98 00 00 00     -  movsxd  rcx,dword ptr [rax+00000098]
+"WRCG_dump.exe"+943061: 3B 88 8C 00 00 00        -  cmp ecx,[rax+0000008C]
+"WRCG_dump.exe"+943067: 7D 0D                    -  jnl WRCG_dump.exe+943076
+"WRCG_dump.exe"+943069: 48 8B 80 90 00 00 00     -  mov rax,[rax+00000090]
+}
+</AssemblerScript>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>5</ID>
+      <Description>"Show WrcVehicleSdk Debug Part 3"</Description>
+      <LastState Activated="1"/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>{ Game   : WRCG_dump.exe
+  Version: 
+  Date   : 2023-11-24
+  Author : Avery
+
+  This script does blah blah blah
+}
+
+define(address,"WRCG.exe"+11991F2)
+define(bytes,0F 85 98 43 00 00)
+
+[ENABLE]
+
+assert(address,bytes)
+alloc(newmem,$1000,"WRCG.exe"+11991F2)
+
+label(code)
+label(return)
+
+newmem:
+
+code:
+//  jne WRCG_dump.exe+119D590
+  jmp return
+
+address:
+  jmp newmem
+  nop
+return:
+
+[DISABLE]
+
+address:
+  db bytes
+  // jne WRCG_dump.exe+119D590
+
+dealloc(newmem)
+
+{
+// ORIGINAL CODE - INJECTION POINT: "WRCG_dump.exe"+11991F2
+
+"WRCG_dump.exe"+11991C2: 48 8B 05 7F D1 BC 00        -  mov rax,[WRCG_dump.exe+1D66348]
+"WRCG_dump.exe"+11991C9: 45 33 ED                    -  xor r13d,r13d
+"WRCG_dump.exe"+11991CC: 48 63 88 98 00 00 00        -  movsxd  rcx,dword ptr [rax+00000098]
+"WRCG_dump.exe"+11991D3: 3B 88 8C 00 00 00           -  cmp ecx,[rax+0000008C]
+"WRCG_dump.exe"+11991D9: 7D 0D                       -  jnl WRCG_dump.exe+11991E8
+"WRCG_dump.exe"+11991DB: 48 8B 80 90 00 00 00        -  mov rax,[rax+00000090]
+"WRCG_dump.exe"+11991E2: 48 8B 14 C8                 -  mov rdx,[rax+rcx*8]
+"WRCG_dump.exe"+11991E6: EB 03                       -  jmp WRCG_dump.exe+11991EB
+"WRCG_dump.exe"+11991E8: 49 8B D5                    -  mov rdx,r13
+"WRCG_dump.exe"+11991EB: 49 3B 96 80 00 00 00        -  cmp rdx,[r14+00000080]
+// ---------- INJECTING HERE ----------
+"WRCG_dump.exe"+11991F2: 0F 85 98 43 00 00           -  jne WRCG_dump.exe+119D590
+// ---------- DONE INJECTING  ----------
+"WRCG_dump.exe"+11991F8: 41 8B 86 28 19 00 00        -  mov eax,[r14+00001928]
+"WRCG_dump.exe"+11991FF: 48 89 9C 24 48 03 00 00     -  mov [rsp+00000348],rbx
+"WRCG_dump.exe"+1199207: 83 C0 FE                    -  add eax,-02
+"WRCG_dump.exe"+119920A: 48 89 B4 24 40 03 00 00     -  mov [rsp+00000340],rsi
+"WRCG_dump.exe"+1199212: 48 89 BC 24 38 03 00 00     -  mov [rsp+00000338],rdi
+"WRCG_dump.exe"+119921A: 4C 89 A4 24 30 03 00 00     -  mov [rsp+00000330],r12
+"WRCG_dump.exe"+1199222: 4C 89 BC 24 28 03 00 00     -  mov [rsp+00000328],r15
+"WRCG_dump.exe"+119922A: 0F 29 B4 24 10 03 00 00     -  movaps [rsp+00000310],xmm6
+"WRCG_dump.exe"+1199232: 0F 29 BC 24 00 03 00 00     -  movaps [rsp+00000300],xmm7
+"WRCG_dump.exe"+119923A: 44 0F 29 84 24 F0 02 00 00  -  movaps [rsp+000002F0],xmm8
+}
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
