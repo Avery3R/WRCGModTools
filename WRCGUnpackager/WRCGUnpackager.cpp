@@ -63,6 +63,8 @@ int main(int argc, char** argv)
 		}
 		else
 		{
+			std::cout << "WARNING: WRC10 Support is very experimental and may be somewhat broken, proceed at your own risk.\nPress enter to continue..." << std::endl;
+			std::cin.ignore(99999, '\n');
 			isWRC10 = true;
 		}
 	}
@@ -320,6 +322,16 @@ int main(int argc, char** argv)
 				infile.close();
 
 				XorData(DEFAULT_XOR_KEY, std::span<uint8_t>(fileData, fileSize));
+
+				if(isWRC10)
+				{
+					std::cout << "For some reason the last 5 bytes of the WRC10 settings file use a different key, attempting to fix..." << std::endl;
+
+					//Revert default xor
+					XorData(DEFAULT_XOR_KEY, std::span<uint8_t>(fileData+fileSize-5, 5), fileSize-5);
+
+					XorData("NPpYg", std::span<uint8_t>(fileData+fileSize-5, 5));
+				}
 
 				std::fstream outfile(settingsFilePath, std::ios::out | std::ios::binary);
 				outfile.write((char*)fileData, fileSize);
