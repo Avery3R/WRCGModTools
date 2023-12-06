@@ -51,12 +51,20 @@ inline void XorData(const std::string_view xorKey, std::span<uint8_t> data, size
 int main(int argc, char** argv)
 {
 	const auto basePath = std::filesystem::current_path();
+	bool isWRC10 = false;
 
 	if(!std::filesystem::exists(basePath / "WRCG.exe"))
 	{
-		std::cerr << "Unpackager must be run from within the same folder as WRCG.exe\n" << "Press enter to exit..." << std::endl;
-		std::cin.ignore(99999, '\n');
-		return 1;
+		if(!std::filesystem::exists(basePath / "WRC10.exe"))
+		{
+			std::cerr << "Unpackager must be run from within the same folder as WRCG.exe or WRC10.exe\n" << "Press enter to exit..." << std::endl;
+			std::cin.ignore(99999, '\n');
+			return 1;
+		}
+		else
+		{
+			isWRC10 = true;
+		}
 	}
 
 	const auto pkgsFolder = basePath / "WIN32" / "PKG";
@@ -194,7 +202,14 @@ int main(int argc, char** argv)
 			remainingFileHeadersData = remainingFileHeadersData.subspan(sizeof(uint32_t));
 
 			//some sort of checksum and or signature
-			remainingFileHeadersData = remainingFileHeadersData.subspan(0x30);
+			if(isWRC10)
+			{
+				remainingFileHeadersData = remainingFileHeadersData.subspan(0x28);
+			}
+			else
+			{
+				remainingFileHeadersData = remainingFileHeadersData.subspan(0x30);
+			}
 
 			pkgFileMetadata.push_back(std::move(meta));
 		}
