@@ -38,6 +38,14 @@ struct FileMetadata
 	FileCompressionType compressionType;
 };
 
+enum GameGeneration
+{
+	GG_UNKNOWN = 0,
+	GG_WRC9,
+	GG_WRC10,
+	GG_WRCG
+};
+
 const std::string DEFAULT_XOR_KEY = "14F5FsyDFFUC4NVANPpYggyakreWkJfy";
 
 inline void XorData(const std::string_view xorKey, std::span<uint8_t> data, size_t keyOffset = 0)
@@ -51,22 +59,31 @@ inline void XorData(const std::string_view xorKey, std::span<uint8_t> data, size
 int main(int argc, char** argv)
 {
 	const auto basePath = std::filesystem::current_path();
-	bool isWRC10 = false;
 
-	if(!std::filesystem::exists(basePath / "WRCG.exe"))
+	GameGeneration gameGeneration = GG_UNKNOWN;
+
+	if(std::filesystem::exists(basePath / "WRCG.exe"))
 	{
-		if(!std::filesystem::exists(basePath / "WRC10.exe"))
-		{
-			std::cerr << "Unpackager must be run from within the same folder as WRCG.exe or WRC10.exe\n" << "Press enter to exit..." << std::endl;
-			std::cin.ignore(99999, '\n');
-			return 1;
-		}
-		else
-		{
-			std::cout << "WARNING: WRC10 Support is very experimental and may be somewhat broken, proceed at your own risk.\nPress enter to continue..." << std::endl;
-			std::cin.ignore(99999, '\n');
-			isWRC10 = true;
-		}
+		gameGeneration = GG_WRCG;
+	}
+	else if(std::filesystem::exists(basePath / "WRC10.exe"))
+	{
+		gameGeneration = GG_WRC10;
+	}
+	else if(std::filesystem::exists(basePath / "WRC9.exe"))
+	{
+		gameGeneration = GG_WRC9;
+	}
+	else
+	{
+		std::cerr << "Unpackager must be run from within the same folder as the game's main exe file (WRCG.exe/WRC10.exe/WRC9.exe)\n" << "Press enter to exit..." << std::endl;
+		std::cin.ignore(99999, '\n');
+		return 1;
+	}
+
+	if(gameGeneration != GG_WRCG)
+	{
+		std::cout << "Warning: Support for versions other than WRCG is experimental and may not work correctly. Use as your own risk" << std::endl;
 	}
 
 	const auto pkgsFolder = basePath / "WIN32" / "PKG";
@@ -104,9 +121,9 @@ int main(int argc, char** argv)
 		std::string xorKey = DEFAULT_XOR_KEY;
 		size_t headerOffset = 0;
 
-		for(size_t i = 0; i < dataBuf.size(); ++i)
+		if(gameGeneration >= GG_WRC10)
 		{
-			dataBuf[i] ^= xorKey[i%xorKey.size()];
+			XorData(xorKey, dataBuf);
 		}
 
 		if(*(uint32_t*)&dataBuf[0] != 'GKPP')
@@ -167,7 +184,11 @@ int main(int argc, char** argv)
 
 		std::vector<uint8_t> fileHeadersBuf(header->fileHeadersSize);
 		infile.read((char*)&fileHeadersBuf[0], header->fileHeadersSize);
-		XorData(xorKey, fileHeadersBuf, headerOffset+0x30);
+
+		if(gameGeneration >= GG_WRC10)
+		{
+			XorData(xorKey, fileHeadersBuf, headerOffset+0x30);
+		}
 
 		std::span<const uint8_t> remainingFileHeadersData = fileHeadersBuf;
 
@@ -204,13 +225,19 @@ int main(int argc, char** argv)
 			remainingFileHeadersData = remainingFileHeadersData.subspan(sizeof(uint32_t));
 
 			//some sort of checksum and or signature
-			if(isWRC10)
+			switch(gameGeneration)
 			{
-				remainingFileHeadersData = remainingFileHeadersData.subspan(0x28);
-			}
-			else
-			{
-				remainingFileHeadersData = remainingFileHeadersData.subspan(0x30);
+				case GG_WRC9:
+				case GG_WRC10:
+				{
+					remainingFileHeadersData = remainingFileHeadersData.subspan(0x28);
+				}
+				break;
+				case GG_WRCG:
+				{
+					remainingFileHeadersData = remainingFileHeadersData.subspan(0x30);
+				}
+				break;
 			}
 
 			pkgFileMetadata.push_back(std::move(meta));
@@ -323,7 +350,7 @@ int main(int argc, char** argv)
 
 				XorData(DEFAULT_XOR_KEY, std::span<uint8_t>(fileData, fileSize));
 
-				if(isWRC10)
+				if(gameGeneration == GG_WRC10)
 				{
 					std::cout << "For some reason the last 5 bytes of the WRC10 settings file use a different key, attempting to fix..." << std::endl;
 
